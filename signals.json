@@ -1,0 +1,65 @@
+{
+  "last_update": "2026-02-19 19:16:05",
+  "signals": [
+    {
+      "name": "한솔케미칼",
+      "code": "014680",
+      "market": "KOSPI",
+      "price": 316500,
+      "bucket": "⚡ BREAKOUT BUY",
+      "side": "BUY",
+      "score": 86,
+      "reasons": [
+        "박스 상단 돌파(+35)",
+        "MA5>MA20(+15)",
+        "종가>MA20(+10)"
+      ],
+      "time": "19:16:00"
+    },
+    {
+      "name": "대신증권",
+      "code": "003540",
+      "market": "KOSPI",
+      "price": 45400,
+      "bucket": "⚡ BREAKOUT BUY",
+      "side": "BUY",
+      "score": 88,
+      "reasons": [
+        "박스 상단 돌파(+35)",
+        "MA5>MA20(+15)",
+        "종가>MA20(+10)"
+      ],
+      "time": "19:16:01"
+    },
+    {
+      "name": "케어젠",
+      "code": "214370",
+      "market": "KOSDAQ",
+      "price": 145200,
+      "bucket": "🔥 STRONG BUY",
+      "side": "BUY",
+      "score": 96,
+      "reasons": [
+        "박스 상단 돌파(+35)",
+        "MA5>MA20(+15)",
+        "종가>MA20(+10)"
+      ],
+      "time": "19:16:01"
+    },
+    {
+      "name": "휴메딕스",
+      "code": "200670",
+      "market": "KOSDAQ",
+      "price": 45800,
+      "bucket": "⚡ BREAKOUT BUY",
+      "side": "BUY",
+      "score": 86,
+      "reasons": [
+        "박스 상단 돌파(+35)",
+        "MA5>MA20(+15)",
+        "종가>MA20(+10)"
+      ],
+      "time": "19:16:02"
+    }
+  ]
+}
