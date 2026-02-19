@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-time Signals | 실시간 시그널</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0e27;
+            --bg-secondary: #151937;
+            --bg-card: #1a1f3a;
+            --text-primary: #e8eaed;
+            --text-secondary: #9aa0a6;
+            --red: #f44336;
+            --blue: #2196f3;
+            --green: #4caf50;
+            --yellow: #ffc107;
+            --border: #2d3455;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: var(--bg-secondary);
+            padding: 30px 0;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .update-info {
+            text-align: right;
+        }
+
+        .last-update {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .auto-refresh {
+            color: var(--green);
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-box {
+            background: var(--bg-card);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .signals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .signal-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 2px solid var(--border);
+            padding: 20px;
+            transition: all 0.3s;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .signal-card.buy {
+            border-left: 4px solid var(--red);
+        }
+
+        .signal-card.sell {
+            border-left: 4px solid var(--blue);
+        }
+
+        .signal-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .signal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .signal-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .signal-badge.strong-buy {
+            background: rgba(244, 67, 54, 0.2);
+            color: var(--red);
+        }
+
+        .signal-badge.breakout-buy {
+            background: rgba(255, 193, 7, 0.2);
+            color: var(--yellow);
+        }
+
+        .signal-badge.breakout-sell {
+            background: rgba(33, 150, 243, 0.2);
+            color: var(--blue);
+        }
+
+        .signal-time {
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .signal-stock {
+            margin-bottom: 12px;
+        }
+
+        .stock-name {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stock-info {
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .signal-price {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .signal-score {
+            display: inline-block;
+            background: var(--bg-secondary);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .signal-reasons {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border);
+        }
+
+        .reason-item {
+            padding: 6px 0;
+            font-size: 13px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .reason-item::before {
+            content: '▸';
+            color: var(--green);
+        }
+
+        .no-signals {
+            text-align: center;
+            padding: 100px 20px;
+            color: var(--text-secondary);
+        }
+
+        .no-signals-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .signals-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>🔥 Real-time Trading Signals</h1>
+            <div class="update-info">
+                <div class="last-update" id="lastUpdate">Loading...</div>
+                <div class="auto-refresh">🔄 Auto-refresh: 30s</div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-label">Total Signals</div>
+                <div class="stat-value" id="totalSignals">-</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Strong Buy</div>
+                <div class="stat-value" style="color: var(--red);" id="strongBuy">-</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Breakout Buy</div>
+                <div class="stat-value" style="color: var(--yellow);" id="breakoutBuy">-</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Breakout Sell</div>
+                <div class="stat-value" style="color: var(--blue);" id="breakoutSell">-</div>
+            </div>
+        </div>
+
+        <div class="signals-grid" id="signalsContainer">
+            <div class="no-signals">
+                <div class="no-signals-icon">⏳</div>
+                <h2>Loading signals...</h2>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadSignals() {
+            try {
+                const response = await fetch('signals.json?t=' + new Date().getTime());
+                const data = await response.json();
+                
+                // Update timestamp
+                document.getElementById('lastUpdate').textContent = `Last update: ${data.last_update}`;
+                
+                // Count by type
+                let strongBuy = 0;
+                let breakoutBuy = 0;
+                let breakoutSell = 0;
+                
+                data.signals.forEach(sig => {
+                    if (sig.bucket === '🔥 STRONG BUY') strongBuy++;
+                    else if (sig.bucket === '⚡ BREAKOUT BUY') breakoutBuy++;
+                    else if (sig.bucket === '🔻 BREAKOUT SELL') breakoutSell++;
+                });
+                
+                // Update stats
+                document.getElementById('totalSignals').textContent = data.signals.length;
+                document.getElementById('strongBuy').textContent = strongBuy;
+                document.getElementById('breakoutBuy').textContent = breakoutBuy;
+                document.getElementById('breakoutSell').textContent = breakoutSell;
+                
+                // Render signals
+                const container = document.getElementById('signalsContainer');
+                
+                if (data.signals.length === 0) {
+                    container.innerHTML = `
+                        <div class="no-signals">
+                            <div class="no-signals-icon">😴</div>
+                            <h2>No active signals</h2>
+                            <p>Waiting for opportunities...</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = data.signals.map(signal => {
+                    const badgeClass = signal.bucket === '🔥 STRONG BUY' ? 'strong-buy' :
+                                      signal.bucket === '⚡ BREAKOUT BUY' ? 'breakout-buy' :
+                                      'breakout-sell';
+                    
+                    const cardClass = signal.side === 'BUY' ? 'buy' : 'sell';
+                    
+                    return `
+                        <div class="signal-card ${cardClass}">
+                            <div class="signal-header">
+                                <span class="signal-badge ${badgeClass}">${signal.bucket}</span>
+                                <span class="signal-time">${signal.time}</span>
+                            </div>
+                            
+                            <div class="signal-stock">
+                                <div class="stock-name">${signal.name}</div>
+                                <div class="stock-info">${signal.market} · ${signal.code}</div>
+                            </div>
+                            
+                            <div class="signal-price">${signal.price.toLocaleString()}원</div>
+                            
+                            <div class="signal-score">Score: ${signal.score}</div>
+                            
+                            <div class="signal-reasons">
+                                ${signal.reasons.map(r => `
+                                    <div class="reason-item">${r}</div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+            } catch (error) {
+                console.error('Error loading signals:', error);
+                document.getElementById('signalsContainer').innerHTML = `
+                    <div class="no-signals">
+                        <div class="no-signals-icon">⚠️</div>
+                        <h2>Failed to load signals</h2>
+                        <p>Make sure the trading bot is running and signals.json exists</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Load on page load
+        loadSignals();
+        
+        // Auto-refresh every 30 seconds
+        setInterval(loadSignals, 30000);
+    </script>
+</body>
+</html>
